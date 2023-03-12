@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <memory>
 #include <iostream>
+#include <array>
 
 class Window
 {
@@ -20,6 +21,10 @@ public:
 
 	bool get_should_close() { return glfwWindowShouldClose(main_window_.get()); }
 
+	auto get_keys() { return keys_; };
+	float get_x_change();
+	float get_y_change();
+
 	void swap_buffers() { glfwSwapBuffers(main_window_.get()); };
 
 private:
@@ -27,5 +32,17 @@ private:
 	int width_, height_;
 	int buffer_width_, buffer_height_;
 
+	std::array<bool, 1024> keys_;
+
+	void create_callbacks();
+
+	float last_x_ = 0.0f;
+	float last_y_ = 0.0f;
+	float x_change_ = 0.0f;
+	float y_change_ = 0.0f;
+	bool mouse_first_moved = true;
+
+	static void handle_keys(GLFWwindow* _window, int _key, int _code, int _action, int _mode);
+	static void handle_mouse(GLFWwindow* _window, double _x_pos, double _y_pos);
 };
 
