@@ -9,12 +9,17 @@
 #include <vector>
 #include "Shader.h"
 #include "Window.h"
+#include "Camera.h"
 
 const GLint WIDTH = 800, HEIGHT = 600;
 const float to_radians = 3.14159265f / 180.0f;
 
 std::vector<std::unique_ptr<Mesh>> mesh_list;
 std::vector<std::unique_ptr<Shader>> shader_list;
+Camera camera;
+
+float delta_time = 0.0f;
+float last_time = 0.0f;
 
 
 bool direction_is_right = true;
@@ -30,33 +35,6 @@ float max_size = 0.8f;
 float min_size = 0.1f;
 
 // vertex shader
-
-static const char* v_shader = "                \n\
-#version 330  \n\
-layout (location = 0) in vec3 pos;             \n\
-out vec4 v_col;                                \n\
-                                                \n\
-uniform mat4 model;                             \n\
-uniform mat4 projection;                            \n\
-                                               \n\
-void main()                                     \n\
-{                                               \n\
-   gl_Position = projection * model * vec4(pos, 1.0);        \n\
-   v_col = vec4(clamp(pos,0.0f,1.0f),1.0f);      \n\
-}                                               \n\
-";
-
-//fragment shader
-static const char* f_shader =  "                \n\
-#version 330                                    \n\
-out vec4 colour;                                \n\
-in vec4 v_col;                                  \n\
-                                                \n\
-void main()                                     \n\
-{                                               \n\
-   colour = v_col;                              \n\
-}                                               \n\
-";
 
 void create_shaders()
 {
@@ -104,9 +82,11 @@ int main()
 
     create_objects();
     create_shaders();
+
+    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.0f, 5.0f, 1.0f);
     //compile_shaders();
 
-    unsigned int uniform_projection = 0, uniform_model = 0;
+    unsigned int uniform_projection = 0, uniform_model = 0, uniform_view = 0;
 
     // projection matrix
 
@@ -115,9 +95,17 @@ int main()
     // Loop until window closed
     while (!main_window.get_should_close())
     {
+        float now = glfwGetTime();
+        delta_time = now - last_time;
+        last_time = now;
+
         // get + handle user input events
 
         glfwPollEvents();
+
+        auto keys_array = main_window.get_keys();
+        camera.key_control(std::span{keys_array},delta_time);
+        camera.mouse_control(main_window.get_x_change(), main_window.get_y_change());
 
         if (direction_is_right)
         {
@@ -163,6 +151,7 @@ int main()
         shader_list[0]->use_shader();
         uniform_model = shader_list[0]->get_model_location();
         uniform_projection = shader_list[0]->get_projection_location();
+        uniform_view = shader_list[0]->get_view_location();
 
         glm::mat4 model(1.0f);
         
@@ -173,6 +162,7 @@ int main()
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));
         mesh_list[0]->render_mesh();
 
 
