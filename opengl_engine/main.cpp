@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -11,12 +13,19 @@
 #include "Window.h"
 #include "Camera.h"
 
+#include "Texture.h"
+
+
+
 const GLint WIDTH = 800, HEIGHT = 600;
 const float to_radians = 3.14159265f / 180.0f;
 
 std::vector<std::unique_ptr<Mesh>> mesh_list;
 std::vector<std::unique_ptr<Shader>> shader_list;
 Camera camera;
+
+Texture brick_texture;
+Texture dirt_texture;
 
 float delta_time = 0.0f;
 float last_time = 0.0f;
@@ -54,20 +63,21 @@ void create_objects()
     };
 
     GLfloat vertices[] = {
-        -1.0f, -1.0f, 0.0f,
-        0.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
+    //  x       y       z         u     v
+        -1.0f, -1.0f, 0.0f,     0.0f, 0.0f,
+        0.0f, -1.0f, 1.0f,      0.5f, 0.0f,
+        1.0f, -1.0f, 0.0f,      1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,       0.5f, 1.0f
     };
     
     auto mesh_ptr = std::make_unique<Mesh>();
-    mesh_ptr->create_mesh(vertices, indices, 12, 12);
+    mesh_ptr->create_mesh(vertices, indices, 20, 12);
 
     mesh_list.emplace_back(std::move(mesh_ptr));
 
 
     auto mesh_ptr2 = std::make_unique<Mesh>();
-    mesh_ptr2->create_mesh(vertices, indices, 12, 12);
+    mesh_ptr2->create_mesh(vertices, indices, 20, 12);
 
     mesh_list.emplace_back(std::move(mesh_ptr2));
 
@@ -84,6 +94,13 @@ int main()
     create_shaders();
 
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.0f, 5.0f, 1.0f);
+
+    brick_texture = Texture("Textures/brick.png");
+    brick_texture.load_texture();
+
+    dirt_texture = Texture("Textures/dirt.png");
+    dirt_texture.load_texture();
+
     //compile_shaders();
 
     unsigned int uniform_projection = 0, uniform_model = 0, uniform_view = 0;
@@ -156,24 +173,28 @@ int main()
         glm::mat4 model(1.0f);
         
         
-        model = glm::translate(model, glm::vec3(tri_offset, tri_offset, -2.5f));
+        //model = glm::translate(model, glm::vec3(tri_offset, tri_offset, -2.5f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
         // model = glm::rotate(model, cur_angle * to_radians, glm::vec3(0.0f, 1.0f, 0.0f));
         
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));
+        brick_texture.use_texture();
         mesh_list[0]->render_mesh();
 
 
         model = glm::mat4(1.0f);
 
 
-        model = glm::translate(model, glm::vec3(-tri_offset, 1.0f, -2.5f));
+        //model = glm::translate(model, glm::vec3(-tri_offset, 1.0f, -2.5f));
+        model = glm::translate(model, glm::vec3(0.0f, 1.0f, -2.5f));
         // model = glm::rotate(model, cur_angle * to_radians, glm::vec3(0.0f, 1.0f, 0.0f));
 
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
+        dirt_texture.use_texture();
         //glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
         mesh_list[1]->render_mesh();
 
