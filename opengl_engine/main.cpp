@@ -14,7 +14,7 @@
 #include "Camera.h"
 
 #include "Texture.h"
-
+#include "Light.h"
 
 
 const GLint WIDTH = 800, HEIGHT = 600;
@@ -26,6 +26,8 @@ Camera camera;
 
 Texture brick_texture;
 Texture dirt_texture;
+
+Light main_light;
 
 float delta_time = 0.0f;
 float last_time = 0.0f;
@@ -101,9 +103,11 @@ int main()
     dirt_texture = Texture("Textures/dirt.png");
     dirt_texture.load_texture();
 
+    main_light = Light(1.0f,1.0f,1.0f,0.8f);
+
     //compile_shaders();
 
-    unsigned int uniform_projection = 0, uniform_model = 0, uniform_view = 0;
+    unsigned int uniform_projection = 0, uniform_model = 0, uniform_view = 0, uniform_ambient_intensity = 0, uniform_ambient_colour = 0;
 
     // projection matrix
 
@@ -169,6 +173,11 @@ int main()
         uniform_model = shader_list[0]->get_model_location();
         uniform_projection = shader_list[0]->get_projection_location();
         uniform_view = shader_list[0]->get_view_location();
+        uniform_ambient_colour = shader_list[0]->get_ambient_colour_location();
+        uniform_ambient_intensity = shader_list[0]->get_ambient_intensity_location();
+
+        main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour);
+
 
         glm::mat4 model(1.0f);
         
