@@ -21,12 +21,14 @@ public:
 	unsigned int get_projection_location();
 	unsigned int get_model_location();
 	unsigned int get_view_location();
+	unsigned int get_ambient_intensity_location();
+	unsigned int get_ambient_colour_location();
 
 	void use_shader();
 	void clear_shader();
 
 private:
-	unsigned int shader_id_, uniform_projection_, uniform_model_, uniform_view_;
+	unsigned int shader_id_, uniform_projection_, uniform_model_, uniform_view_, uniform_ambient_intensity_, uniform_ambient_colour_;
 	
 	void compile_shader(std::string_view _vertex_code, std::string_view _fragment_code);
 	void add_shader(unsigned int _the_program, std::string_view _shader_code, GLenum _shader_type);
