@@ -178,7 +178,6 @@ int main()
 
         main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour);
 
-
         glm::mat4 model(1.0f);
         
         
