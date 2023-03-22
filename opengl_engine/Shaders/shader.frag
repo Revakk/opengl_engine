@@ -21,6 +21,7 @@ void main()
    vec4 ambient_colour = vec4(directional_light.colour,1.0f) * directional_light.ambient_intensity;
 
    float diffuse_factor = max(dot(normalize(normal), normalize(directional_light.direction)),0.0f);
+   vec4 diffuse_color = vec4(directional_light.colour ,1.0f) * directional_light.diffuse_intensity * diffuse_factor;
 
-   colour = texture(the_texture,tex_coord) * ambient_colour;
+   colour = texture(the_texture,tex_coord) * (ambient_colour + diffuse_colour);
 }

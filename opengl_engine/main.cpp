@@ -55,6 +55,55 @@ void create_shaders()
     shader_list.emplace_back(std::move(shader1));
 }
 
+void calc_average_normal(unsigned int* _indices, unsigned int _indice_count, float* _vertices,
+    unsigned int _vertices_count, unsigned int _vert_length, unsigned int _normal_offset)
+{
+    for (std::size_t i = 0; i < _indice_count; i+3)
+    {
+        unsigned int in0 = _indices[i] * _vert_length; // one vertex has 8 length (x,y,z,u,v,nx,ny,nz) by getting index value (for example 3) we multiply it by vertex length and we get 24 which is 0.0f from vertices[]
+        unsigned int in1 = _indices[i + 1] * _vert_length;
+        unsigned int in2 = _indices[i + 2] * _vert_length;
+
+        // compute the edges (vectors) from triangle points
+        glm::vec3 v1(_vertices[in1] - _vertices[in0], _vertices[in1 + 1] - _vertices[in0 + 1], _vertices[in1 + 2] - _vertices[in0 + 2]);
+        glm::vec3 v2(_vertices[in2] - _vertices[in0], _vertices[in2 + 1] - _vertices[in0 + 1], _vertices[in2 + 2] - _vertices[in0 + 2]);
+
+        // dot product the edges -> perpendicular vector to edges
+        glm::vec3 normal = glm::cross(v1, v2);
+        normal = glm::normalize(normal);
+
+        // get the positions of normals for vertex offsetting from the current point (x,y,z) end of the vertex
+        in0 += _normal_offset;
+        in1 += _normal_offset;
+        in2 += _normal_offset;
+
+        _vertices[in0] += normal.x;
+        _vertices[in0+1] += normal.y;
+        _vertices[in0+2] += normal.z;
+
+        _vertices[in1] += normal.x;
+        _vertices[in1+1] += normal.y;
+        _vertices[in1+2] += normal.z;
+
+        _vertices[in2] += normal.x;
+        _vertices[in2+1] += normal.y;
+        _vertices[in2+2] += normal.z;
+
+    }
+
+    // for every row in vertices
+    for (size_t i = 0; i < _vertices_count / _vert_length; i++)
+    {
+        // get the absolute offset
+        unsigned int n_offset = i * _vert_length + _normal_offset;
+        glm::vec3 vec(_vertices[n_offset], _vertices[n_offset+1], _vertices[n_offset+2]);
+        glm::normalize(vec);
+        _vertices[n_offset] = vec.x;
+        _vertices[n_offset+1] = vec.y;
+        _vertices[n_offset+2] = vec.z;
+    }
+}
+
 void create_objects() 
 {
     unsigned int indices[] = {
@@ -65,21 +114,23 @@ void create_objects()
     };
 
     GLfloat vertices[] = {
-    //  x       y       z         u     v
-        -1.0f, -1.0f, 0.0f,     0.0f, 0.0f,
-        0.0f, -1.0f, 1.0f,      0.5f, 0.0f,
-        1.0f, -1.0f, 0.0f,      1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,       0.5f, 1.0f
+    //  x       y       z         u     v       nx    ny   nz
+        -1.0f, -1.0f, 0.0f,     0.0f, 0.0f,     0.0f, 0.0f,0.0f,
+        0.0f, -1.0f, 1.0f,      0.5f, 0.0f,     0.0f, 0.0f,0.0f,
+        1.0f, -1.0f, 0.0f,      1.0f, 0.0f,     0.0f, 0.0f,0.0f,
+        0.0f, 1.0f, 0.0f,       0.5f, 1.0f,     0.0f, 0.0f,0.0f
     };
+
+    calc_average_normal(indices, 12, vertices, 32, 8, 5);
     
     auto mesh_ptr = std::make_unique<Mesh>();
-    mesh_ptr->create_mesh(vertices, indices, 20, 12);
+    mesh_ptr->create_mesh(vertices, indices, 32, 12);
 
     mesh_list.emplace_back(std::move(mesh_ptr));
 
 
     auto mesh_ptr2 = std::make_unique<Mesh>();
-    mesh_ptr2->create_mesh(vertices, indices, 20, 12);
+    mesh_ptr2->create_mesh(vertices, indices, 32, 12);
 
     mesh_list.emplace_back(std::move(mesh_ptr2));
 
@@ -103,11 +154,12 @@ int main()
     dirt_texture = Texture("Textures/dirt.png");
     dirt_texture.load_texture();
 
-    main_light = Light(1.0f,1.0f,1.0f,0.8f);
+    main_light = Light(1.0f,1.0f,1.0f,0.8f,2.0f,-1.0f,-2.0f,1.0f);
 
     //compile_shaders();
 
-    unsigned int uniform_projection = 0, uniform_model = 0, uniform_view = 0, uniform_ambient_intensity = 0, uniform_ambient_colour = 0;
+    unsigned int uniform_projection = 0, uniform_model = 0, uniform_view = 0,
+        uniform_ambient_intensity = 0, uniform_ambient_colour = 0, uniform_direction = 0, uniform_diffuse_intensity = 0;
 
     // projection matrix
 
@@ -175,8 +227,10 @@ int main()
         uniform_view = shader_list[0]->get_view_location();
         uniform_ambient_colour = shader_list[0]->get_ambient_colour_location();
         uniform_ambient_intensity = shader_list[0]->get_ambient_intensity_location();
+        uniform_direction = shader_list[0]->get_direction_location();
+        uniform_diffuse_intensity = shader_list[0]->get_diffuse_intensity_location();
 
-        main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour);
+        main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour, uniform_diffuse_intensity, uniform_direction);
 
         glm::mat4 model(1.0f);
         
