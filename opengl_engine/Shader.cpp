@@ -77,6 +77,16 @@ unsigned int Shader::get_ambient_colour_location()
     return uniform_ambient_colour_;
 }
 
+unsigned int Shader::get_diffuse_intensity_location()
+{
+    return uniform_diffuse_intensity_;
+}
+
+unsigned int Shader::get_direction_location()
+{
+    return uniform_direction_;
+}
+
 void Shader::use_shader()
 {
     if (shader_id_)
@@ -140,6 +150,8 @@ void Shader::compile_shader(std::string_view _vertex_code, std::string_view _fra
     uniform_view_ = glGetUniformLocation(shader_id_, "view");
     uniform_ambient_colour_ = glGetUniformLocation(shader_id_, "directional_light.colour");
     uniform_ambient_intensity_ = glGetUniformLocation(shader_id_, "directional_light.ambient_intensity");
+    uniform_direction_ = glGetUniformLocation(shader_id_, "directional_light.direction");
+    uniform_diffuse_intensity_ = glGetUniformLocation(shader_id_, "directional_light.diffuse_intensity");
 }
 
 void Shader::add_shader(unsigned int _the_program, std::string_view _shader_code, GLenum _shader_type)
