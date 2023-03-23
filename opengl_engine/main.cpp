@@ -58,7 +58,7 @@ void create_shaders()
 void calc_average_normal(unsigned int* _indices, unsigned int _indice_count, float* _vertices,
     unsigned int _vertices_count, unsigned int _vert_length, unsigned int _normal_offset)
 {
-    for (std::size_t i = 0; i < _indice_count; i+3)
+    for (std::size_t i = 0; i < _indice_count; i+=3)
     {
         unsigned int in0 = _indices[i] * _vert_length; // one vertex has 8 length (x,y,z,u,v,nx,ny,nz) by getting index value (for example 3) we multiply it by vertex length and we get 24 which is 0.0f from vertices[]
         unsigned int in1 = _indices[i + 1] * _vert_length;
@@ -97,7 +97,7 @@ void calc_average_normal(unsigned int* _indices, unsigned int _indice_count, flo
         // get the absolute offset
         unsigned int n_offset = i * _vert_length + _normal_offset;
         glm::vec3 vec(_vertices[n_offset], _vertices[n_offset+1], _vertices[n_offset+2]);
-        glm::normalize(vec);
+        vec = glm::normalize(vec);
         _vertices[n_offset] = vec.x;
         _vertices[n_offset+1] = vec.y;
         _vertices[n_offset+2] = vec.z;
@@ -154,7 +154,7 @@ int main()
     dirt_texture = Texture("Textures/dirt.png");
     dirt_texture.load_texture();
 
-    main_light = Light(1.0f,1.0f,1.0f,0.8f,2.0f,-1.0f,-2.0f,1.0f);
+    main_light = Light(1.0f,1.0f,1.0f,0.2f,2.0f,-1.0f,-2.0f,1.0f);
 
     //compile_shaders();
 
@@ -230,7 +230,7 @@ int main()
         uniform_direction = shader_list[0]->get_direction_location();
         uniform_diffuse_intensity = shader_list[0]->get_diffuse_intensity_location();
 
-        main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour, uniform_diffuse_intensity, uniform_direction);
+        main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour,uniform_direction, uniform_diffuse_intensity);
 
         glm::mat4 model(1.0f);
         
