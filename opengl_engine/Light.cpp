@@ -26,5 +26,5 @@ void Light::use_light(float _ambient_intensity_location, float _ambient_colour_l
 	glUniform3f(_ambient_colour_location, colour_.x, colour_.y, colour_.z);
 	glUniform1f(_ambient_intensity_location, ambient_intensity_);
 	glUniform3f(_direction_location, direction_.x, direction_.y, direction_.z);
-	glUniform1f(_direction_location, diffuse_intensity_);
+	glUniform1f(_diffuse_intensity_location, diffuse_intensity_);
 }
