@@ -69,7 +69,7 @@ void calc_average_normal(unsigned int* _indices, unsigned int _indice_count, flo
         glm::vec3 v2(_vertices[in2] - _vertices[in0], _vertices[in2 + 1] - _vertices[in0 + 1], _vertices[in2 + 2] - _vertices[in0 + 2]);
 
         // dot product the edges -> perpendicular vector to edges
-        glm::vec3 normal = glm::cross(v1, v2);
+        glm::vec3 normal = glm::cross(v2, v1);
         normal = glm::normalize(normal);
 
         // get the positions of normals for vertex offsetting from the current point (x,y,z) end of the vertex
@@ -154,7 +154,7 @@ int main()
     dirt_texture = Texture("Textures/dirt.png");
     dirt_texture.load_texture();
 
-    main_light = Light(1.0f,1.0f,1.0f,0.2f,2.0f,-1.0f,-2.0f,1.0f);
+    main_light = Light(1.0f,1.0f,1.0f,0.4f,2.0f,-1.0f,-2.0f,1.0f);
 
     //compile_shaders();
 
@@ -230,7 +230,7 @@ int main()
         uniform_direction = shader_list[0]->get_direction_location();
         uniform_diffuse_intensity = shader_list[0]->get_diffuse_intensity_location();
 
-        main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour,uniform_direction, uniform_diffuse_intensity);
+        main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour,uniform_diffuse_intensity, uniform_direction);
 
         glm::mat4 model(1.0f);
         
