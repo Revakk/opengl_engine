@@ -25,13 +25,17 @@ public:
 	unsigned int get_ambient_colour_location();
 	unsigned int get_diffuse_intensity_location();
 	unsigned int get_direction_location();
+	unsigned int get_eye_position_location();
+	unsigned int get_specular_intensity_location();
+	unsigned int get_shininess_location();
 
 	void use_shader();
 	void clear_shader();
 
 private:
-	unsigned int shader_id_, uniform_projection_, uniform_model_, uniform_view_,
-		uniform_ambient_intensity_, uniform_ambient_colour_, uniform_diffuse_intensity_, uniform_direction_;
+	unsigned int shader_id_, uniform_projection_, uniform_model_, uniform_view_, uniform_eye_position,
+		uniform_ambient_intensity_, uniform_ambient_colour_, uniform_diffuse_intensity_, uniform_direction_,
+		uniform_specular_intensity_, uniform_shininess_;
 	
 	void compile_shader(std::string_view _vertex_code, std::string_view _fragment_code);
 	void add_shader(unsigned int _the_program, std::string_view _shader_code, GLenum _shader_type);

@@ -76,6 +76,11 @@ glm::mat4 Camera::calculate_view_matrix()
 	return glm::lookAt(position_, position_ + front_position_, up_);
 }
 
+glm::vec3 Camera::get_camera_position()
+{
+	return position_;
+}
+
 void Camera::update()
 {
 	front_position_.x = std::cos(glm::radians(yaw_)) * cos(glm::radians(pitch_));
