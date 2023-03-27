@@ -15,6 +15,7 @@
 
 #include "Texture.h"
 #include "Light.h"
+#include "Material.h"
 
 
 const GLint WIDTH = 800, HEIGHT = 600;
@@ -26,6 +27,9 @@ Camera camera;
 
 Texture brick_texture;
 Texture dirt_texture;
+
+Material shiny_material;
+Material dull_material;
 
 Light main_light;
 
@@ -115,9 +119,9 @@ void create_objects()
 
     GLfloat vertices[] = {
     //  x       y       z         u     v       nx    ny   nz
-        -1.0f, -1.0f, 0.0f,     0.0f, 0.0f,     0.0f, 0.0f,0.0f,
+        -1.0f, -1.0f, -0.6f,     0.0f, 0.0f,     0.0f, 0.0f,0.0f,
         0.0f, -1.0f, 1.0f,      0.5f, 0.0f,     0.0f, 0.0f,0.0f,
-        1.0f, -1.0f, 0.0f,      1.0f, 0.0f,     0.0f, 0.0f,0.0f,
+        1.0f, -1.0f, -0.6f,      1.0f, 0.0f,     0.0f, 0.0f,0.0f,
         0.0f, 1.0f, 0.0f,       0.5f, 1.0f,     0.0f, 0.0f,0.0f
     };
 
@@ -154,12 +158,15 @@ int main()
     dirt_texture = Texture("Textures/dirt.png");
     dirt_texture.load_texture();
 
-    main_light = Light(1.0f,1.0f,1.0f,0.4f,2.0f,-1.0f,-2.0f,1.0f);
+    shiny_material = Material(1.0f, 32.0f);
+    dull_material = Material(1.0f, 2.0f);
+
+    main_light = Light(1.0f,1.0f,1.0f,0.1f,-2.0f,-1.0f,-2.0f,0.1f);
 
     //compile_shaders();
 
-    unsigned int uniform_projection = 0, uniform_model = 0, uniform_view = 0,
-        uniform_ambient_intensity = 0, uniform_ambient_colour = 0, uniform_direction = 0, uniform_diffuse_intensity = 0;
+    unsigned int uniform_projection = 0, uniform_model = 0, uniform_view = 0, uniform_eye_position = 0,
+        uniform_ambient_intensity = 0, uniform_ambient_colour = 0, uniform_direction = 0, uniform_diffuse_intensity = 0,uniform_specular_intensity, uniform_shininess = 0;
 
     // projection matrix
 
@@ -229,21 +236,27 @@ int main()
         uniform_ambient_intensity = shader_list[0]->get_ambient_intensity_location();
         uniform_direction = shader_list[0]->get_direction_location();
         uniform_diffuse_intensity = shader_list[0]->get_diffuse_intensity_location();
+        uniform_eye_position = shader_list[0]->get_eye_position_location();
+        uniform_specular_intensity = shader_list[0]->get_specular_intensity_location();
+        uniform_shininess = shader_list[0]->get_shininess_location();
 
         main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour,uniform_diffuse_intensity, uniform_direction);
 
+        glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));
+        glUniform3f(uniform_eye_position, camera.get_camera_position().x, camera.get_camera_position().y, camera.get_camera_position().z);
+
         glm::mat4 model(1.0f);
-        
         
         //model = glm::translate(model, glm::vec3(tri_offset, tri_offset, -2.5f));
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
         // model = glm::rotate(model, cur_angle * to_radians, glm::vec3(0.0f, 1.0f, 0.0f));
         
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
+        //model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));
+
         brick_texture.use_texture();
+        shiny_material.use_material(uniform_specular_intensity, uniform_shininess);
         mesh_list[0]->render_mesh();
 
 
@@ -251,12 +264,13 @@ int main()
 
 
         //model = glm::translate(model, glm::vec3(-tri_offset, 1.0f, -2.5f));
-        model = glm::translate(model, glm::vec3(0.0f, 1.0f, -2.5f));
+        model = glm::translate(model, glm::vec3(0.0f, 4.0f, -2.5f));
         // model = glm::rotate(model, cur_angle * to_radians, glm::vec3(0.0f, 1.0f, 0.0f));
 
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
+        //model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
         dirt_texture.use_texture();
+        dull_material.use_material(uniform_specular_intensity, uniform_shininess);
         //glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
         mesh_list[1]->render_mesh();
 

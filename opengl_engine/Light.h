@@ -12,8 +12,8 @@ public:
 	
 	~Light();
 
-	void use_light(float _ambient_intensity_location, float _ambient_colour_location,
-		float _diffuse_intensity_location, float _direction_location);
+	void use_light(unsigned int _ambient_intensity_location, unsigned int _ambient_colour_location,
+		unsigned int _diffuse_intensity_location, unsigned int _direction_location);
 
 	
 

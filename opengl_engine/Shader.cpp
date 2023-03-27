@@ -87,6 +87,21 @@ unsigned int Shader::get_direction_location()
     return uniform_direction_;
 }
 
+unsigned int Shader::get_eye_position_location()
+{
+    return uniform_eye_position;
+}
+
+unsigned int Shader::get_specular_intensity_location()
+{
+    return uniform_specular_intensity_;
+}
+
+unsigned int Shader::get_shininess_location()
+{
+    return uniform_shininess_;
+}
+
 void Shader::use_shader()
 {
     if (shader_id_)
@@ -152,6 +167,9 @@ void Shader::compile_shader(std::string_view _vertex_code, std::string_view _fra
     uniform_ambient_intensity_ = glGetUniformLocation(shader_id_, "directional_light.ambient_intensity");
     uniform_direction_ = glGetUniformLocation(shader_id_, "directional_light.direction");
     uniform_diffuse_intensity_ = glGetUniformLocation(shader_id_, "directional_light.diffuse_intensity");
+    uniform_eye_position = glGetUniformLocation(shader_id_, "eye_position");
+    uniform_specular_intensity_ = glGetUniformLocation(shader_id_, "material.specular_intensity");
+    uniform_shininess_ = glGetUniformLocation(shader_id_, "material.shininess");
 }
 
 void Shader::add_shader(unsigned int _the_program, std::string_view _shader_code, GLenum _shader_type)

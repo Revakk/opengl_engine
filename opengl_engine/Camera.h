@@ -18,6 +18,7 @@ public:
 	void mouse_control(float _x_change, float _y_change);
 
 	glm::mat4 calculate_view_matrix();
+	glm::vec3 get_camera_position();
 
 private:
 	void update();
@@ -35,7 +36,5 @@ private:
 
 	float movement_speed_;
 	float turn_speed_;
-
-	
 };
 
