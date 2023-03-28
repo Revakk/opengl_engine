@@ -161,7 +161,7 @@ int main()
     shiny_material = Material(1.0f, 32.0f);
     dull_material = Material(1.0f, 2.0f);
 
-    main_light = Light(1.0f,1.0f,1.0f,0.1f,-2.0f,-1.0f,-2.0f,0.1f);
+    main_light = Light(1.0f,1.0f,1.0f,0.1f,2.0f,-3.5f,7.0f,0.8f);
 
     //compile_shaders();
 

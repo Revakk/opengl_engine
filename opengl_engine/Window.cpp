@@ -48,7 +48,7 @@ int Window::initialise()
     // Allow forward compatibility
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    main_window_ = std::shared_ptr<GLFWwindow>( glfwCreateWindow(width_, height_, "Test window", nullptr, nullptr) );
+    main_window_ = std::unique_ptr<GLFWwindow, DestroyglfwWin>(glfwCreateWindow(width_, height_, "Test window", nullptr, nullptr));
 
     if (!main_window_)
     {
