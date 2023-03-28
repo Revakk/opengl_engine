@@ -38,7 +38,7 @@ void main()
 
    if(diffuse_factor > 0.0f)
    {
-	vec3 frag_to_eye = normalize(eye_position - frag_pos);
+	vec3 frag_to_eye = normalize(frag_pos - eye_position);
 	vec3 reflected_vertex = normalize(reflect(directional_light.direction, normalize(normal)));
 
 	float specular_factor = dot(frag_to_eye,reflected_vertex);

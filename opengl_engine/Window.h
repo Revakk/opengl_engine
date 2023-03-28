@@ -27,8 +27,17 @@ public:
 
 	void swap_buffers() { glfwSwapBuffers(main_window_.get()); };
 
+	struct DestroyglfwWin {
+
+		void operator()(GLFWwindow* ptr) {
+			glfwDestroyWindow(ptr);
+		}
+
+	};
+
+
 private:
-	std::shared_ptr<GLFWwindow> main_window_;
+	std::unique_ptr<GLFWwindow, DestroyglfwWin> main_window_;
 	int width_, height_;
 	int buffer_width_, buffer_height_;
 
