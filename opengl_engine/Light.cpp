@@ -28,3 +28,9 @@ void Light::use_light(unsigned int _ambient_intensity_location, unsigned int _am
 	glUniform3f(_direction_location, direction_.x, direction_.y, direction_.z);
 	glUniform1f(_diffuse_intensity_location, diffuse_intensity_);
 }
+
+void Light::rotate_light(float _time)
+{
+	direction_.x = 1.0f + std::sin(_time) * 2.0f;
+	direction_.y = std::sin(_time /2.0f);
+}
