@@ -161,7 +161,7 @@ int main()
     shiny_material = Material(1.0f, 32.0f);
     dull_material = Material(1.0f, 2.0f);
 
-    main_light = Light(1.0f,1.0f,1.0f,0.1f,2.0f,-3.5f,7.0f,0.8f);
+    main_light = Light(1.0f,1.0f,1.0f,0.1f,2.0f,-3.5f,7.0f,0.3f);
 
     //compile_shaders();
 
@@ -240,7 +240,9 @@ int main()
         uniform_specular_intensity = shader_list[0]->get_specular_intensity_location();
         uniform_shininess = shader_list[0]->get_shininess_location();
 
+        main_light.rotate_light(now);
         main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour,uniform_diffuse_intensity, uniform_direction);
+        
 
         glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.calculate_view_matrix()));
