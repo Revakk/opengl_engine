@@ -14,7 +14,7 @@
 #include "Camera.h"
 
 #include "Texture.h"
-#include "Light.h"
+#include "DirectionalLight.h"
 #include "Material.h"
 
 
@@ -31,7 +31,7 @@ Texture dirt_texture;
 Material shiny_material;
 Material dull_material;
 
-Light main_light;
+DirectionalLight main_light;
 
 float delta_time = 0.0f;
 float last_time = 0.0f;
@@ -161,7 +161,7 @@ int main()
     shiny_material = Material(1.0f, 32.0f);
     dull_material = Material(1.0f, 2.0f);
 
-    main_light = Light(1.0f,1.0f,1.0f,0.1f,2.0f,-3.5f,7.0f,0.3f);
+    main_light = DirectionalLight(1.0f,1.0f,1.0f,0.1f,0.3f,2.0f,-3.5f,7.0f);
 
     //compile_shaders();
 
