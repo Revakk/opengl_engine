@@ -12,7 +12,7 @@ public:
 		float _con, float _lin, float _exp);
 
 	void use_light(float _ambient_intensity_location, float _ambient_colour_location,
-		float _diffuse_intensity_location, float _position_location, float _linear_location, float _exponent_location);
+		float _diffuse_intensity_location, float _position_location,float _constant_location, float _linear_location, float _exponent_location);
 
 	~PointLight();
 
