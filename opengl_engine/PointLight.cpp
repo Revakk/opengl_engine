@@ -20,8 +20,16 @@ PointLight::PointLight(float _red, float _green, float _blue,
 }
 
 void PointLight::use_light(float _ambient_intensity_location, float _ambient_colour_location,
-	float _diffuse_intensity_location, float _position_location, float _linear_location, float _exponent_location)
+	float _diffuse_intensity_location, float _position_location,float _constant_location , float _linear_location, float _exponent_location)
 {
+	glUniform3f(_ambient_colour_location, colour_.x, colour_.y, colour_.z);
+	glUniform1f(_ambient_intensity_location, ambient_intensity_);
+	glUniform1f(_diffuse_intensity_location, diffuse_intensity_);
+
+	glUniform3f(_position_location, position_.x, position_.y, position_.z);
+	glUniform1f(_constant_location, constant_);
+	glUniform1f(_linear_location, linear_);
+	glUniform1f(_exponent_location, exponent_);
 
 }
 

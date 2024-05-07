@@ -166,7 +166,7 @@ int main()
     //compile_shaders();
 
     unsigned int uniform_projection = 0, uniform_model = 0, uniform_view = 0, uniform_eye_position = 0,
-        uniform_ambient_intensity = 0, uniform_ambient_colour = 0, uniform_direction = 0, uniform_diffuse_intensity = 0,uniform_specular_intensity, uniform_shininess = 0;
+        uniform_specular_intensity, uniform_shininess = 0;
 
     // projection matrix
 
@@ -232,16 +232,17 @@ int main()
         uniform_model = shader_list[0]->get_model_location();
         uniform_projection = shader_list[0]->get_projection_location();
         uniform_view = shader_list[0]->get_view_location();
-        uniform_ambient_colour = shader_list[0]->get_ambient_colour_location();
-        uniform_ambient_intensity = shader_list[0]->get_ambient_intensity_location();
-        uniform_direction = shader_list[0]->get_direction_location();
-        uniform_diffuse_intensity = shader_list[0]->get_diffuse_intensity_location();
         uniform_eye_position = shader_list[0]->get_eye_position_location();
         uniform_specular_intensity = shader_list[0]->get_specular_intensity_location();
         uniform_shininess = shader_list[0]->get_shininess_location();
 
+
         main_light.rotate_light(now);
-        main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour,uniform_diffuse_intensity, uniform_direction);
+        shader_list[0]->set_directional_light(&main_light);
+
+
+        //main_light.rotate_light(now);
+        //main_light.use_light(uniform_ambient_intensity,uniform_ambient_colour,uniform_diffuse_intensity, uniform_direction);
         
 
         glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
